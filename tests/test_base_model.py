@@ -1,6 +1,17 @@
 #!/usr/bin/python3
 """Test units of BaseModel parent class."""
-from models.base_model import BaseModel
+import sys
+import os
+# Get the directory path of the current script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Construct the path to the 'models' directory relative to the current module
+model_dir = os.path.abspath(os.path.join(current_dir, '..', 'models'))
+
+# Add the 'models' directory to the Python path
+sys.path.append(model_dir)
+
+from base_model import BaseModel
 from datetime import datetime
 import unittest
 from uuid import uuid4
@@ -14,7 +25,7 @@ class TestBaseModel(unittest.TestCase):
         """Test instantiation of BaseModel() object."""
         test_city = BaseModel()
         self.assertEqual(str(type(test_city)),\
-                "<class 'models.base_model.BaseModel'>")
+                "<class 'base_model.BaseModel'>")
         self.assertIsInstance(test_city, BaseModel)
         self.assertTrue(issubclass(type(test_city), BaseModel))
 
