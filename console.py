@@ -7,7 +7,7 @@ class HBNBCommand(cmd.Cmd):
     """Command line interpreter to allow interactive program usage"""
     # intro = '\033[1;32mWelcome to the HBNB shell.\
     #         \nType \'help\' or \'?\' to see command options.'
-    prompt = '\033[1;37;40m(hbnb) '
+    prompt = '(hbnb) '  # \033[1;37;40m - use to add bright green colour
 
     def do_quit(self, line):
         """Type command to exit the program\n"""
