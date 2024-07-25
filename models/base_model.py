@@ -6,7 +6,7 @@ common attributes and methods for managing instance identification,
 creation, update timestamps, and serialization to dictionary format.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 class BaseModel:
@@ -30,9 +30,9 @@ class BaseModel:
         Creates a unique identifier and sets the creation and update
         timestamps to the current time.
         """
-        self.id = uuid4()
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        self.id = str(uuid4())
+        self.created_at = datetime.now(timezone.utc)
+        self.updated_at = datetime.now(timezone.utc)
 
     def __str__(self):
         """
@@ -41,15 +41,14 @@ class BaseModel:
         The string includes the class name, unique identifier, and
         dictionary of the instance's attributes.
         """
-        return "[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__)
-
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
     def save(self):
         """
         Update the instance's update timestamp.
 
         Sets the 'updated_at' attribute to the current time.
         """
-        self.updated_at = datetime.now()
+        self.updated_at = datetime.now(timezone.utc)
 
     def to_dict(self):
         """
@@ -61,8 +60,8 @@ class BaseModel:
         Returns:
             dict: A dictionary representation of the instance.
         """
-        class_dict = self.__dict__.copy()
-        class_dict["__class__"] = self.__class__.__name__
-        class_dict["created_at"] = self.created_at.isoformat()
-        class_dict["updated_at"] = self.updated_at.isoformat()
-        return class_dict
+        instance_dict = self.__dict__.copy()
+        instance_dict["__class__"] = self.__class__.__name__
+        instance_dict["created_at"] = instance_dict["created_at"].isoformat()
+        instance_dict["updated_at"] = instance_dict["updated_at"].isoformat()
+        return instance_dict
