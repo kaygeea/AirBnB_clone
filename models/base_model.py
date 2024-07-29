@@ -23,16 +23,25 @@ class BaseModel:
     - updated_at: Timestamp when the instance was last updated.
     """
     
-    def __init__(self) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         """
         Initialize a new instance of BaseModel.
 
         Creates a unique identifier and sets the creation and update
         timestamps to the current time.
         """
-        self.id = str(uuid4())
-        self.created_at = datetime.now(timezone.utc)
-        self.updated_at = datetime.now(timezone.utc)
+        if kwargs:
+            for att_name, att_val in kwargs.items():
+                if att_name != "__class__":
+                    setattr(self, att_name, att_val)
+            if 'created_at' in kwargs and isinstance(kwargs['created_at'], str):
+                self.created_at = datetime.fromisoformat(kwargs['created_at'])
+            if 'updated_at' in kwargs and isinstance(kwargs['updated_at'], str):
+                self.updated_at = datetime.fromisoformat(kwargs['updated_at'])
+        else:
+            self.id = str(uuid4())
+            self.created_at = datetime.now(timezone.utc)
+            self.updated_at = datetime.now(timezone.utc)
 
     def __str__(self):
         """
