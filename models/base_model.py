@@ -7,6 +7,7 @@ creation, update timestamps, and serialization to dictionary format.
 """
 
 from datetime import datetime, timezone
+from models import storage
 from uuid import uuid4
 
 class BaseModel:
@@ -28,7 +29,13 @@ class BaseModel:
         Initialize a new instance of BaseModel.
 
         Creates a unique identifier and sets the creation and update
-        timestamps to the current time.
+        timestamps to the current time. If kwargs are provided, the
+        instance is initialized from the dictionary representation.
+        Otherwise, it is considered a new instance and added to storage.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
         """
         if kwargs:
             for att_name, att_val in kwargs.items():
@@ -42,6 +49,7 @@ class BaseModel:
             self.id = str(uuid4())
             self.created_at = datetime.now(timezone.utc)
             self.updated_at = datetime.now(timezone.utc)
+            storage.new()
 
     def __str__(self):
         """
@@ -53,11 +61,13 @@ class BaseModel:
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
     def save(self):
         """
-        Update the instance's update timestamp.
+        Update the instance's update timestamp and save it to storage.
 
-        Sets the 'updated_at' attribute to the current time.
+        Sets the 'updated_at' attribute to the current time and calls the
+        save method on the storage instance.
         """
         self.updated_at = datetime.now(timezone.utc)
+        storage.save()
 
     def to_dict(self):
         """
