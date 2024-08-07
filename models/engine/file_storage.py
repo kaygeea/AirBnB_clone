@@ -55,8 +55,8 @@ class FileStorage:
         Args:
             obj (BaseModel): The object to store in the dictionary.
         """
-        key = obj.__class__.__name__ + "." + obj.id
-        self.__objects[key] = obj
+        key = f"{obj.__class__.__name__}.{obj.id}"
+        self.__objects[key] = obj.to_dict()
     
     def save(self):
         """
@@ -78,3 +78,9 @@ class FileStorage:
         if Path(self.__file_path).is_file():
             with open(self.__file_path) as data:
                 self.__objects = load(data)
+            #try:
+                #with open(self.__file_path) as data:
+                    #self.__objects = load(data)
+            #except BaseException as e:
+                #print('The file contains invalid JSON')
+
