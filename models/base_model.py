@@ -49,7 +49,7 @@ class BaseModel:
             self.id = str(uuid4())
             self.created_at = datetime.now(timezone.utc)
             self.updated_at = datetime.now(timezone.utc)
-            storage.new()
+            storage.new(self)
 
     def __str__(self):
         """
@@ -59,6 +59,7 @@ class BaseModel:
         dictionary of the instance's attributes.
         """
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
+
     def save(self):
         """
         Update the instance's update timestamp and save it to storage.
