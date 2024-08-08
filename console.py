@@ -106,7 +106,7 @@ class HBNBCommand(cmd.Cmd):
                 all_objs = storage.all()
                 this_key = ".".join(args)
                 if this_key in all_objs.keys():
-                    instance = BaseModel(all_objs[this_key])
+                    instance = BaseModel(**all_objs[this_key])
                     print(str(instance))
                     return
                 else:
