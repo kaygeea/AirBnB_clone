@@ -185,5 +185,55 @@ class HBNBCommand(cmd.Cmd):
 
         print(str_reps)
 
+    def do_update(self, arg: str):
+        """
+        Updates an instance based on the class name and `id` by adding or
+        updating an attribute.
+
+        Usage: update <class name> <id> <attribute name> "<attribute value>"
+
+        - If the class name is missing, prints ** class name missing **.
+        - If the class name doesn't exist, prints ** class doesn't exist **.
+        - If the `id` is missing, prints ** instance id missing **.
+        - If the attribute name is missing, prints ** attribute name missing **.
+        - If the value for the attribute name is missing, prints ** value missing **.
+        - If the instance of the class name doesn’t exist for the id, prints ** no instance found **.
+
+        Args:
+            arg (str): The command arguments containing the class name, id,
+            attribute name, and attribute value.
+        """
+        if not arg:
+            print("** class name missing **")
+            return
+        
+        args = arg.split()
+        num_args = len(args)
+
+        if args[0] == BaseModel.__name__:
+            if num_args >= 4:
+                all_objs = storage.all()
+                this_key = f"{args[0]}.{args[1]}"
+                if this_key in all_objs.keys():
+                    all_objs[this_key][args[2]] = args[3]
+                    instance = BaseModel(**all_objs[this_key])
+                    instance.save()
+                    return
+                else:
+                    print("** no instance found **")
+                    return
+            elif num_args == 3:
+                print("** value missing **")
+                return
+            elif num_args == 2:
+                print("** attribute name missing **")
+                return
+            elif num_args < 2:
+                print("** instance id missing **")
+                return
+        else:
+            print("** class doesn't exist **")
+            return
+
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
