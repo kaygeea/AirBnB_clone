@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 """
 Module containing the BaseModel class.
 
@@ -6,9 +8,8 @@ common attributes and methods for managing instance identification,
 creation, update timestamps, and serialization to dictionary format.
 """
 
-from datetime import datetime, timezone
-from models import storage
 from uuid import uuid4
+from datetime import datetime
 
 class BaseModel:
     """
@@ -23,8 +24,8 @@ class BaseModel:
     - created_at: Timestamp when the instance was created.
     - updated_at: Timestamp when the instance was last updated.
     """
-    
-    def __init__(self, *args, **kwargs) -> None:
+
+    def __init__(self):
         """
         Initialize a new instance of BaseModel.
 
@@ -37,19 +38,9 @@ class BaseModel:
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
         """
-        if kwargs:
-            for att_name, att_val in kwargs.items():
-                if att_name != "__class__":
-                    setattr(self, att_name, att_val)
-            if 'created_at' in kwargs and isinstance(kwargs['created_at'], str):
-                self.created_at = datetime.fromisoformat(kwargs['created_at'])
-            if 'updated_at' in kwargs and isinstance(kwargs['updated_at'], str):
-                self.updated_at = datetime.fromisoformat(kwargs['updated_at'])
-        else:
-            self.id = str(uuid4())
-            self.created_at = datetime.now(timezone.utc)
-            self.updated_at = datetime.now(timezone.utc)
-            storage.new(self)
+        self.id = str(uuid4())
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
 
     def __str__(self):
         """
@@ -59,16 +50,11 @@ class BaseModel:
         dictionary of the instance's attributes.
         """
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
-
+    
     def save(self):
         """
-        Update the instance's update timestamp and save it to storage.
-
-        Sets the 'updated_at' attribute to the current time and calls the
-        save method on the storage instance.
-        """
-        self.updated_at = datetime.now(timezone.utc)
-        storage.save()
+        Set the `updated_at` instance attribute to the current datetime"""
+        self.updated_at = datetime.now()
 
     def to_dict(self):
         """
@@ -80,8 +66,10 @@ class BaseModel:
         Returns:
             dict: A dictionary representation of the instance.
         """
+
         instance_dict = self.__dict__.copy()
         instance_dict["__class__"] = self.__class__.__name__
         instance_dict["created_at"] = instance_dict["created_at"].isoformat()
         instance_dict["updated_at"] = instance_dict["updated_at"].isoformat()
+
         return instance_dict
