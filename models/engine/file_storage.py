@@ -1,10 +1,10 @@
+#!/usr/bin/python3
 """
 Module containing the FileStorage class.
 
 The FileStorage class serializes instances to a JSON file and 
 deserializes JSON file to instances.
 """
-
 from json import dump, load
 from pathlib import Path
 
@@ -26,18 +26,8 @@ class FileStorage:
     - reload(self): deserializes the JSON file to __objects (only if the
       JSON file (__file_path) exists; otherwise, do nothing)
     """
-
     __file_path = "file.json"
     __objects = {}
-
-    def __init__(self):
-        """
-        Initialize a new instance of FileStorage.
-
-        This method doesn't require any parameters and initializes the
-        storage engine.
-        """
-        pass
 
     def all(self):
         """
@@ -57,16 +47,11 @@ class FileStorage:
         """
         key = f"{obj.__class__.__name__}.{obj.id}"
         self.__objects[key] = obj.to_dict()
-    
-    def save(self):
-        """
-        Set in __objects the obj with key <obj class name>.id.
 
-        Args:
-            obj (BaseModel): The object to store in the dictionary.
-        """
-        with open(self.__file_path, "w") as file:
-            dump(self.__objects, file)
+    def save(self):
+        """Serializes __objects to the JSON file at __file_path."""
+        with open(self.__file_path, 'w') as f:
+            dump(self.__objects, f, indent=4)
 
     def reload(self):
         """
@@ -75,12 +60,8 @@ class FileStorage:
         Loads the JSON file content into the __objects dictionary if the
         file exists.
         """
-        if Path(self.__file_path).is_file():
+        if Path(self.__file_path).exists():
             with open(self.__file_path) as data:
                 self.__objects = load(data)
-            #try:
-                #with open(self.__file_path) as data:
-                    #self.__objects = load(data)
-            #except BaseException as e:
-                #print('The file contains invalid JSON')
-
+        else:
+            pass
